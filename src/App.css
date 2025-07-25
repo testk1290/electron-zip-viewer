@@ -1,38 +1,143 @@
-.App {
-  text-align: center;
-}
+/* 基本的なレイアウト */
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background-color: #282c34; color: white; }
+.App { text-align: center; }
+.App-header { padding: 20px; border-bottom: 1px solid #444; }
+.container { padding: 20px; }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+/* フォルダ選択エリア */
+.folder-area { margin-bottom: 20px; background-color: #20232a; padding: 15px; border-radius: 8px; }
+.folder-area p { word-break: break-all; }
+.folder-area button { margin: 0 5px; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
+/* プレビューリスト */
+.preview-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+.preview-item { background-color: #3a3f4b; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; align-items: center; }
+.preview-thumbnail { width: 150px; height: 150px; background-color: #282c34; border-radius: 4px; display: flex; justify-content: center; align-items: center; overflow: hidden; margin-bottom: 10px; }
+.preview-thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+.no-image { font-size: 3rem; color: #666; }
+.filename { font-size: 0.9rem; word-break: break-all; margin: 0 0 10px 0; flex-grow: 1; }
+.view-button { width: 100%; padding: 8px; border: none; border-radius: 5px; background-color: #4CAF50; color: white; cursor: pointer; }
+.view-button:disabled { background-color: #555; cursor: not-allowed; }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+
+/* --- ★★★ 画像ビューアのスタイル ★★★ --- */
+.viewer-container {
+  padding: 10px;
+  background-color: #20232a;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  height: 100vh; /* 画面全体の高さを取る */
+}
+
+/* 全画面表示のスタイル */
+.viewer-container:fullscreen {
+  background-color: #000;
+  padding: 0;
+}
+
+/* 画像を囲むラッパー */
+.image-wrapper {
+  flex-grow: 1; /* 残りのスペースをすべて使用 */
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  overflow: hidden;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* 画像本体 */
+.image-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain; /* アスペクト比を維持してフィットさせる */
+  border-radius: 4px;
+}
+
+/* 下部のコントロール部分 */
+.controls {
+  flex-shrink: 0; /* このエリアは縮まない */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
+}
+.nav-button { background-color: #61dafb; border: none; color: #20232a; padding: 10px 20px; font-size: 1.2rem; font-weight: bold; border-radius: 5px; cursor: pointer; }
+.page-info { font-size: 1.2rem; min-width: 80px; }
+
+/* ツールバー */
+.toolbar {
+  flex-shrink: 0; /* このエリアは縮まない */
+  padding-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+.fullscreen-button, .exit-button { border: none; color: white; padding: 10px 15px; font-size: 16px; border-radius: 5px; cursor: pointer; }
+.fullscreen-button { background-color: #4CAF50; }
+.exit-button { background-color: #f44336; }
+
+/* .viewer-container がフルスクリーンになった時の、その子孫要素のスタイル */
+.viewer-container:fullscreen .controls,
+.viewer-container:fullscreen .toolbar {
+  display: none; /* コントロールとツールバーを非表示にする */
+}
+
+.loading-fullscreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+}
+
+/* --- 機能改善用のスタイル --- */
+
+.folder-area {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 各要素の間のスペース */
+}
+
+.folder-path {
+  font-size: 0.9rem;
+  color: #ccc;
+  /* 長いパスがはみ出ないように */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-actions {
+  display: flex;
+  gap: 10px; /* ボタン間のスペース */
+  flex-wrap: wrap; /* 画面が狭い時に折り返す */
+}
+
+.cancel-button {
+  background-color: #f44336; /* 赤色 */
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.progress-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.progress-area p {
+  margin: 0;
+  font-size: 0.9rem;
+  flex-shrink: 0; /* メッセージが縮まないように */
+}
+.progress-area progress {
+  width: 100%; /* 横幅いっぱいに広がる */
+}
+.progress-area span {
+  font-family: monospace; /* 数字の見た目を揃える */
+  font-size: 0.9rem;
+  min-width: 80px; /* "100 / 100" が入る幅を確保 */
+  text-align: right;
 }

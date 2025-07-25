@@ -2,21 +2,57 @@
   "name": "electron-zip-viewer",
   "version": "0.1.0",
   "private": true,
+  "main": "build/electron.js",
+  "homepage": "./",
   "dependencies": {
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "electron-store": "^8.1.0",
+    "jszip": "^3.10.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "wait-on": "^7.2.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "concurrently -k \"npm run react-start\" \"npm run electron-start\"",
+    "react-start": "react-scripts start",
+    "electron-start": "wait-on http://localhost:3000 && electron main.js",
+    "package": "npm run build && electron-builder",
+    "build": "react-scripts build && cp main.js build/electron.js && cp preload.js build/preload.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "build": {
+    "appId": "com.example.electron-zip-viewer",
+    "files": [
+      "build/**/*"
+    ],
+    "extraFiles": [
+      {
+        "from": "preload.js",
+        "to": "preload.js"
+      }
+    ],
+    "asarUnpack": [
+      "**/*.node"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "directories": {
+      "buildResources": "assets",
+      "output": "dist"
+    }
   },
   "eslintConfig": {
     "extends": [
